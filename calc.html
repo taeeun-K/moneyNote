@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.min.js"></script>
+  <!-- <link rel="stylesheet" href="./css/style.css"> -->
+  <title>태은 지출 가계부 </title>
+
+  
+<style>
+
+@font-face {
+    font-family: 'OmuDaye';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-01@1.0/omyu_pretty.woff2') format('woff2');
+    font-weight: normal;
+    font-display: swap;
+}
+
+@font-face{
+    font-family: 'ongeulip';
+    src: url('./font/ongeulip.ttf') format('truetype');
+}
+  *{padding: 0; margin: 0; box-sizing: border-box;}
+  
+/* 디자인 컬러및 기본  */
+  body {
+    font-family: 'ongeulip';
+    background-color: #fff;
+    margin: 0;
+    padding: 0;
+  }
+  #wrap {
+    width: 100%;
+    margin: 0px auto;
+    background: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  header {
+    margin-bottom: 20px;
+  }
+  .logo a {
+    text-decoration: none;
+    font-size: 24px;
+    color: #333;
+  }
+  .resetBtn {
+    display: block;
+    background-color: rgb(99, 0, 0);
+    color: #fff;
+    border: none;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-family: 'OmuDaye';
+    font-weight: 500;
+    border-radius: 8px;
+  }
+  .resetBtn:hover {
+    background-color: #ff0000;
+  }
+  section {
+    margin-top: 20px;
+  }
+  form fieldset {
+    border: 1px dashed #ffae00;
+    border-radius: 16px;
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+  form legend {
+    width: fit-content;
+    background: #ef79ff;
+    font-weight: bold;
+    padding: 0 5px;
+    color: rgb(255, 255, 255);
+    font-size: 14px;
+    line-height: 24px;
+    border-radius: 8px;
+    letter-spacing: 1.5px;
+    font-family: 'OmuDaye';
+  }
+  form label {
+    display: block;
+    margin-top: 5px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'OmuDaye';
+  }
+  form label:first-of-type {
+    margin-top: 0;
+  }
+  form input {
+    width: 100%;
+    height: 36px;
+    padding: 10px;
+    margin-top: 5px;    
+    font-size: 14px;
+    font-weight: 300;
+    font-family: 'OmuDaye';
+    box-sizing: border-box;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    
+  }
+
+  /* 결제수단 선택 스타일 */
+  form select {
+    width: 100%;
+    height: 36px;
+    padding: 0 10px;
+    margin-top: 5px;
+    font-size: 16px;
+    font-weight: 300;
+    font-family: 'OmuDaye';
+    box-sizing: border-box;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    outline: none;
+  }
+
+  form button.send {
+    margin-top: 15px;
+    padding: 8px 15px;
+    background-color: #ef79ff;
+    color: rgb(0, 0, 0);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: 'OmuDaye';
+    letter-spacing: 1px;
+  }
+  form button.send:hover {
+    /* background-color: #2980b9; */
+  }
+  #result h2 {
+    margin-top: 0;
+  }
+  #recordList {
+    list-style-type: none;
+    padding: 0;
+  }
+  #recordList li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+  }
+  #recordList li span {
+    text-align: center;
+  }
+  /* 버튼 디자인 이쁘게  */
+  .deleteBtn {
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  /* 탭영역 스타일 */
+  #tabMenu {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    border-bottom: 2px solid #ff9100;
+    margin-bottom: 20px;
+  }
+  #tabMenu li {
+    margin-right: 10px;
+  }
+  #tabMenu li button {
+    background: none;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: 'ongeulip';
+    letter-spacing: 1.8px;
+    color: #333;
+    border-bottom: 2px solid transparent;
+  }
+  #tabMenu li.active button {
+    border-bottom: 2px solid #26ff43;
+    font-weight: 700;
+    color: #d753ff;
+  }
+  #tabMenu li button:hover {
+    color: #d753ff;
+  }
+  /* 주별 지출내역 스타일 */
+  #weeklyRecordList {
+    list-style-type: none;
+    padding: 0;
+  }
+  #weeklyRecordList li {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+  }
+  #weeklyRecordList li span {
+    text-align: center;
+    font-size:16px
+  }
+  #weeklyRecordList li span.date {
+    width: 100%;
+    margin-bottom: 5px;
+    text-align: left;
+    font-size:14px;
+  }
+  #weeklyRecordList li span.text {
+    /* flex: 1; */
+    font-size: 18px;
+    font-weight: 700;
+    font-family: 'Dandan';
+    text-align: left;
+  }
+  #weeklyRecordList li span.price {
+    font-size: 18px;
+    font-weight: 700;
+    font-family: 'SchoolSafetyStubbyChalk';
+  }
+  /* 월별 지출내역 스타일 */
+  #monthlyRecordList {
+    list-style-type: none;
+    padding: 0;
+  }
+  #monthlyRecordList li {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+  }
+  #monthlyRecordList li span {
+    text-align: center;
+    font-size:16px
+  }
+  #monthlyRecordList li span.date {
+    width: 100%;
+    margin-bottom: 5px;
+    text-align: left;
+    font-size:14px;
+  }
+  #monthlyRecordList li span.text {
+    /* flex: 1; */
+    font-size: 18px;
+    font-weight: 700;
+    font-family: 'DanDan';
+    text-align: left;
+  }
+  #monthlyRecordList li span.price {
+    font-size: 18px;
+    font-weight: 700;
+    font-family: 'SchoolSafetyStubbyChalk';
+  }
+
+  
+
+
+  header h1.logo_calc   {text-align: center;}
+  header h1.logo_calc a   {color: #ff6daa; font-size: 28px; font-family: 'ongeulip'; font-weight: 500; text-decoration: none; }
+
+  #result {margin-top: 20px;}
+  #result .top   {display: flex; flex-flow: row nowrap; justify-content: space-between;}
+  #result .top h2 {margin-right: 15px; font-size: 14px; font-family: 'OmuDaye'; color: rgb(114, 114, 114);}
+  #result .top strong   {text-align: center; font-size: 16px; font-family: 'OmuDaye';}
+    #result .top h2,
+    #result .top strong {line-height: 36px;}
+  
+  #recordList li span { height: 100%; font-size: 14px; font-family: 'OmuDaye'; border-right: 1px dashed #ccc;}
+  #recordList li span.date {font-size: 11px; text-align: left; flex-grow: 0; width: 60px;}
+  #recordList li span.paymentMethod {padding: 0 5px;}
+  #recordList li span.text {flex: 1; font-size: 16px;}
+  #recordList li span.price {flex-grow: 0; width: 100px; border-right: none;}
+  button.deleteBtn    { width: 20px; height: 20px; line-height: 20px; font-size: 14px; border-radius: 50%; font-weight: 700; background-color: #ff5b91; font-family: 'OmuDaye';}
+
+
+  #weeklyResult h2, #monthlyResult h2 {font-size: 20px; font-family: 'OmuDaye';color: rgb(80, 80, 80);}
+
+  #filterPaymentMethod {width: 80px;margin-top: 0;margin-right: auto;} 
+
+#weeklyResult .priceBox{width: 100%; display: flex; flex-wrap: nowrap; justify-content: space-between ;}
+#weeklyResult .priceBox .payment-methods{display: inline-block;}
+#weeklyResult .priceBox .payment-methods span{font-size: 15px; font-weight: 500;}
+#weeklyResult .priceBox .payment-methods span.text,
+#weeklyResult .priceBox .payment-methods span.text {display: block; }
+
+#monthlyResult .priceBox{width: 100%; display: flex; flex-wrap: nowrap; justify-content: space-between ;}
+#monthlyResult .priceBox .payment-methods{display: inline-block;}
+#monthlyResult .priceBox .payment-methods span{font-size: 15px; font-weight: 500;}
+#monthlyResult .priceBox .payment-methods span.text,
+#monthlyResult .priceBox .payment-methods span.text {display: block; }
+/* #weeklyResult .priceBox .payment-methods{display: inline-block;} */
+  /* #weeklyResult span.price,
+  #monthlyResult span.price {
+      display: block;
+} */
+</style>
+</head>
+<body>
+  <div id="wrap">
+    <header>
+      <h1 class="logo_calc"><a href="#">❤︎ 탱 가계부 ❤︎</a></h1>
+      <button type="button" class="resetBtn">All Delete</button>
+    </header>
+<section>
+  <!-- 용돈 기록장을 쿠키에 넣어서 관리하는 화면  -->
+   <ul id="tabMenu">
+    <li><button type="button" class="btnCalc">Daily</button></li>
+    <li><button type="button" class="btnList">Weekly</button></li>
+    <li><button type="button" class="btnListMon">Monthly</button></li>
+   </ul>
+
+    <article id="calcArticle">
+      <form name="calcForm" id="calcForm">
+        <!-- 지출기입 날짜선택, 내용입력, 금액입력, 결제수단을 선택란 아래에 기록하기 버튼 추가 -->
+        <fieldset>
+          <legend>Expense Input</legend>
+          <label for="date">Date</label>
+          <input type="date" id="date" name="date" required value="">
+          
+          <label for="content">Where</label>
+          <input type="text" id="content" name="content" placeholder="where did you spend the money ???" required>
+          
+          <label for="amount">Amount</label>
+          <input type="number" id="amount" name="amount" placeholder="how much ???" required>
+          
+          <label for="paymentMethod">Payment method</label>
+          <select id="paymentMethod" name="paymentMethod" required>
+            <option value="cash">cash</option>
+            <option value="kakao">kakao</option>
+            <option value="shinhan">shinhan</option>
+            <option value="samsung">samsung</option>
+          </select>
+
+          <button type="submit" class="send">Save</button>
+      </form>
+
+      <div id="result">
+        <div class="top">
+          <h2>Expense Details</h2>
+          <select id="filterPaymentMethod">
+            <option value="">ALL</option>
+            <option value="cash">Cash</option>
+            <option value="kakao">Kakao</option>
+            <option value="shinhan">shinhan</option>
+            <option value="samsung">Samsung</option>
+          </select>
+        </div>
+
+        <ul id="recordList">
+          <!-- 기록된 용돈 내역이 여기에 표시됩니다. -->
+        </ul>
+    </article>
+    
+    <article id="weeklyArticle" style="display:none;">
+      <!-- 용돈 사용 내역을 주별로 정리해서 노출 -->
+      <div id="weeklyResult">
+        <div class="top">
+          <h2>Weekly spend</h2>
+        </div>
+        <ul id="weeklyRecordList">
+          <!-- 주별 기록된 용돈 내역이 여기에 표시됩니다. -->
+        </ul>
+    </article>
+    <aticale id="monthlyArticle" style="display:none;">
+      <!-- 용돈 사용 내역을 월별로 정리해서 노출 -->
+      <div id="monthlyResult">
+        <div class="top">
+          <h2>Monthly spend</h2>
+        </div>
+        <ul id="monthlyRecordList">
+          <!-- 월별 기록된 용돈 내역이 여기에 표시됩니다. -->
+        </ul>
+    </aticale>
+
+<script>
+
+//
+
+
+// 용돈 기록을 로컬 스토리지에 저장하고 불러오는 기능 구현
+$(document).ready(function() {
+    // 탭메뉴 클릭 시 활성화
+    $('#tabMenu button').click(function() {
+        const index = $(this).parent().index();
+        $('#tabMenu li').removeClass('active');
+        $(this).parent().addClass('active');
+        if (index === 0) {
+            $('#calcArticle').show();
+            $('#weeklyArticle').hide();
+            $('#monthlyArticle').hide();
+
+        } else if (index === 1) {
+            $('#calcArticle').hide();
+            $('#monthlyArticle').hide();
+            const records = JSON.parse(localStorage.getItem('allowanceRecords')) || [];
+            loadRecords(records);
+            $('#calcArticle').hide();
+            $('#weeklyArticle').show();
+            $('#monthlyArticle').hide();
+        } else if (index === 2) {
+            $('#calcArticle').hide();
+            $('#weeklyArticle').hide();
+            const records = JSON.parse(localStorage.getItem('allowanceRecords')) || [];
+            loadRecords(records);
+            $('#calcArticle').hide();
+            $('#weeklyArticle').hide();
+            $('#monthlyArticle').show();
+        }
+    });
+
+
+    // 기록된 용돈 내역을 로컬 스토리지에서 불러와서 표시
+    function loadRecords() {
+        const records = JSON.parse(localStorage.getItem('allowanceRecords')) || [];
+        const recordList = $('#recordList');
+        recordList.empty();
+        // 날짜순으로 정렬
+
+        records.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        // 12일 ~ 다음달 11일 내역만 필터링해서 화면하단에 노출 이번달 12일이 지났으면 다음달 11일까지
+        const today = new Date();
+        let startDate, endDate; 
+        if (today.getDate() >= 12) {
+            startDate = new Date(today.getFullYear(), today.getMonth(), 12);
+            endDate = new Date(today.getFullYear(), today.getMonth() + 1, 11);
+        } else {
+            startDate = new Date(today.getFullYear(), today.getMonth() - 1, 12);
+            endDate = new Date(today.getFullYear(), today.getMonth(), 11);
+        } 
+        
+        // 결제수단 필터 값 가져오기
+        const selectedPaymentMethod = $('#filterPaymentMethod').val();
+        
+        const filteredRecords = records.filter(record => {
+            const recordDate = new Date(record.date);
+            const dateMatch = recordDate >= startDate && recordDate <= endDate;
+            const paymentMatch = !selectedPaymentMethod || record.paymentMethod === selectedPaymentMethod;
+            return dateMatch && paymentMatch;
+        });
+
+        // 필터링된 내역 표시
+        filteredRecords.forEach((record, index) => {
+            recordList.append(`
+                <li>
+                    <span class="date">${record.date}</span>
+                    <span class="paymentMethod">${record.paymentMethod || ''}</span>
+                    <span class="text">${record.content}</span>
+                    <span class="price">${record.amount.toLocaleString()}원</span>
+                    <button type="button" class="deleteBtn" data-index="${index}">X</button>
+                </li>
+            `);
+        });
+
+
+        // 총 지출 금액 계산 및 표시
+        const totalAmount = filteredRecords.reduce((sum, record) => sum + record.amount, 0);
+        $('#result .top strong').remove();
+        $('#result .top').append(`<strong>Total: ${totalAmount.toLocaleString()}원</strong>`);
+
+        
+        // 주별 지출 내역 표시 함수 호출      
+        loadWeeklyRecords(records);
+        // 월별 지출 내역 표시
+        loadMonthlyRecords(records);
+
+    }
+
+    // 주별 지출 내역 표시 함수
+    function loadWeeklyRecords(records) {
+        const weeklyRecordList = $('#weeklyRecordList');
+        weeklyRecordList.empty();
+        if (records.length === 0) {
+            weeklyRecordList.append('<li>기록된 내역이 없습니다.</li>');
+            return;
+        }
+        // 주별, 결제수단별로 그룹화
+        const weeklyData = {};
+        records.forEach(record => {
+            const weekStart = getWeekStartDate(record.date);
+            if (!weeklyData[weekStart]) {
+                weeklyData[weekStart] = {
+                    cash: 0,
+                    kakao: 0,
+                    shinhan: 0,
+                    samsung: 0
+                };
+            }
+            const paymentMethod = record.paymentMethod || 'cash';
+            weeklyData[weekStart][paymentMethod] += record.amount;
+            weeklyData[weekStart].total += record.amount;
+        });
+        // 주별 내역 표시
+        for (const [week, amounts] of Object.entries(weeklyData)) {
+            weeklyRecordList.append(`
+                <li>
+                    <span class="date">${week} ~ ${getWeekEndDate(week)}</span>
+                    <div class="priceBox">
+                        <div class="payment-methods">
+                            <span class="text">cash <span class="price">${amounts.cash.toLocaleString()}원</span></span>
+                            <span class="text">kakao <span class="price">${amounts.kakao.toLocaleString()}원</span></span>
+                            <span class="text">shinhan <span class="price">${amounts.shinhan.toLocaleString()}원</span></span>
+                            <span class="text">samsung <span class="price">${amounts.samsung.toLocaleString()}원</span></span>
+                        </div>
+                        <span class="text">Total Price <span class="totalPrice">${amounts.total.toLocaleString()}원</span></span>
+                    </div>
+                </li>
+            `);
+        }
+    }
+    // 주 시작일(월요일) 계산 함수
+    function getWeekStartDate(dateString) { 
+        const date = new Date(dateString);
+        const day = date.getDay();
+        const diff = date.getDate() - day + (day === 0 ? -6 : 1); // 일요일(0)인 경우 -6, 그 외는 +1
+        const weekStart = new Date(date.setDate(diff));
+        return weekStart.toISOString().split('T')[0];
+    }
+    // 주 종료일(일요일) 계산 함수
+    function getWeekEndDate(startDateString) {
+        const startDate = new Date(startDateString);
+        const weekEnd = new Date(startDate);
+        weekEnd.setDate(startDate.getDate() + 6);
+        return weekEnd.toISOString().split('T')[0];
+    }
+
+
+    // 월별 지출 내역 표시 함수 월 기준은 12일부터 다음달 11일
+    function loadMonthlyRecords(records) {
+        const monthlyRecordList = $('#monthlyRecordList');
+        monthlyRecordList.empty();
+        if (records.length === 0) {
+            monthlyRecordList.append('<li>기록된 내역이 없습니다.</li>');
+            return;
+        }
+        // 월별, 결제수단별로 그룹화
+        const monthlyData = {};
+        records.forEach(record => {
+            const monthKey = getCustomMonthKey(record.date);
+            if (!monthlyData[monthKey]) {
+                monthlyData[monthKey] = {
+                    cash: 0,
+                    kakao: 0,
+                    shinhan: 0,
+                    samsung: 0
+                };
+            }
+            const paymentMethod = record.paymentMethod || 'cash';
+            monthlyData[monthKey][paymentMethod] += record.amount;
+            monthlyData[monthKey].total += record.amount;
+        });
+        // 월별 내역 표시
+        for (const [month, amounts] of Object.entries(monthlyData)) {
+            monthlyRecordList.append(`
+                <li>
+                    <span class="date">${month}월 (12일 ~ 다음달 11일)</span>
+                    <div class="priceBox">
+                        <div class="payment-methods">
+                            <span class="text">cash <span class="price">${amounts.cash.toLocaleString()}원</span></span>
+                            <span class="text">kakao <span class="price">${amounts.kakao.toLocaleString()}원</span></span>
+                            <span class="text">shinhan <span class="price">${amounts.shinhan.toLocaleString()}원</span></span>
+                            <span class="text">samsung <span class="price">${amounts.samsung.toLocaleString()}원</span></span>
+                        </div>
+                        <span class="text">Total Price <span class="totalPrice">${amounts.total.toLocaleString()}원</span></span>
+                    </div>
+                </li>
+            `);
+        }
+    }
+    // 커스텀 월 키 계산 함수 (12일 ~ 다음달 11일 기준)
+    function getCustomMonthKey(dateString) {
+        const date = new Date(dateString);
+        let month = date.getMonth() + 1; // 월은 0부터 시작하므로 +1
+        const day = date.getDate();
+        if (day < 12) {
+            month -= 1;
+            if (month === 0) {
+                month = 12; // 1월 이전은 12월로 설정
+            }
+        }
+        return month;
+    }
+
+
+
+    // 용돈 기록 폼 제출 시 로컬 스토리지에 저장 오늘 날짜 자동 입력
+    $('#calcForm').on('submit', function(event) {
+        event.preventDefault();
+        const date = $('#date').val();
+        const content = $('#content').val();
+        const amount = $('#amount').val();
+        const paymentMethod = $('#paymentMethod').val();
+        if (!date || !content || !amount) {
+            alert('모든 필드를 입력해주세요.');
+            return;
+        }
+        const newRecord = { date, content, amount: parseInt(amount), paymentMethod };
+        const records = JSON.parse(localStorage.getItem('allowanceRecords')) || [];
+        records.push(newRecord);
+        // localStorage.setItem('allowanceRecords', JSON.stringify(records));
+
+        // 아래주석2줄 date 기준 스토리지 정렬이 안되서 추가
+        // 기록을 날짜순으로 정렬
+        records.sort((a, b) => new Date(b.date) - new Date(a.date)); // 내림차순 정렬 (최신 날짜가 위에)
+        // 정렬된 기록을 로컬 스토리지에 저장
+        localStorage.setItem('allowanceRecords', JSON.stringify(records));
+
+        loadRecords();
+        this.reset();
+    });
+    
+
+    // 삭제 버튼 클릭 시 해당 기록 삭제
+    $('#recordList').on('click', '.deleteBtn', function() {
+        const index = $(this).data('index');
+        const records = JSON.parse(localStorage.getItem('allowanceRecords')) || [];
+        records.splice(index, 1);
+        localStorage.setItem('allowanceRecords', JSON.stringify(records));
+        loadRecords();
+    });
+
+
+    // 전체 삭제 버튼 클릭 시 모든 기록 삭제
+    $('.resetBtn').on('click', function() {
+        if (confirm('정말로 모든 기록을 삭제하시겠습니까?')) {
+            localStorage.removeItem('allowanceRecords');
+            loadRecords();
+        }
+    });
+
+    // 결제수단 필터 변경 시 목록 다시 로드
+    $('#filterPaymentMethod').on('change', function() {
+        loadRecords();
+    });
+
+    // 초기 로드 시 기록 불러오기
+    loadRecords();
+})
+</script>
+    
+
+<!-- https://velog.io/@wswy17/JS-Local-Storage-%ED%99%9C%EC%9A%A9%ED%95%B4-%EB%A9%94%EB%AA%A8%EC%9E%A5-%EB%A7%8C%EB%93%A4%EA%B8%B0-zl6p5kzs#-%EC%A0%80%EC%9E%A5-%EC%82%AD%EC%A0%9C-%EC%88%98%EC%A0%95-%EA%B0%80%EB%8A%A5%ED%95%9C-%EB%A9%94%EB%AA%A8%EC%9E%A5-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0 -->
+
+</body>
+</html>
