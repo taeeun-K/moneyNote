@@ -217,13 +217,13 @@
     /* flex: 1; */
     font-size: 18px;
     font-weight: 700;
-    font-family: 'Dandan';
+    /* font-family: 'Dandan'; */
     text-align: left;
   }
   #weeklyRecordList li span.price {
     font-size: 18px;
     font-weight: 700;
-    font-family: 'SchoolSafetyStubbyChalk';
+    /* font-family: 'SchoolSafetyStubbyChalk'; */
   }
   /* 월별 지출내역 스타일 */
   #monthlyRecordList {
@@ -252,13 +252,13 @@
     /* flex: 1; */
     font-size: 18px;
     font-weight: 700;
-    font-family: 'DanDan';
+    /* font-family: 'DanDan'; */
     text-align: left;
   }
   #monthlyRecordList li span.price {
     font-size: 18px;
     font-weight: 700;
-    font-family: 'SchoolSafetyStubbyChalk';
+    /* font-family: 'SchoolSafetyStubbyChalk'; */
   }
 
   
@@ -286,13 +286,13 @@
 
   #filterPaymentMethod {width: 80px;margin-top: 0;margin-right: auto;} 
 
-#weeklyResult .priceBox{width: 100%; display: flex; flex-wrap: nowrap; justify-content: space-between ;}
+#weeklyResult .priceBox{width: 100%; display: flex; flex-wrap: nowrap; justify-content: space-between ; font-family: 'OmuDaye';}
 #weeklyResult .priceBox .payment-methods{display: inline-block;}
 #weeklyResult .priceBox .payment-methods span{font-size: 15px; font-weight: 500;}
 #weeklyResult .priceBox .payment-methods span.text,
 #weeklyResult .priceBox .payment-methods span.text {display: block; }
 
-#monthlyResult .priceBox{width: 100%; display: flex; flex-wrap: nowrap; justify-content: space-between ;}
+#monthlyResult .priceBox{width: 100%; display: flex; flex-wrap: nowrap; justify-content: space-between ; font-family: 'OmuDaye';}
 #monthlyResult .priceBox .payment-methods{display: inline-block;}
 #monthlyResult .priceBox .payment-methods span{font-size: 15px; font-weight: 500;}
 #monthlyResult .priceBox .payment-methods span.text,
@@ -492,7 +492,8 @@ $(document).ready(function() {
                     cash: 0,
                     kakao: 0,
                     shinhan: 0,
-                    samsung: 0
+                    samsung: 0,
+                    total: 0
                 };
             }
             const paymentMethod = record.paymentMethod || 'cash';
@@ -551,7 +552,8 @@ $(document).ready(function() {
                     cash: 0,
                     kakao: 0,
                     shinhan: 0,
-                    samsung: 0
+                    samsung: 0,
+                    total: 0
                 };
             }
             const paymentMethod = record.paymentMethod || 'cash';
@@ -562,7 +564,7 @@ $(document).ready(function() {
         for (const [month, amounts] of Object.entries(monthlyData)) {
             monthlyRecordList.append(`
                 <li>
-                    <span class="date">${month}월 (12일 ~ 다음달 11일)</span>
+                    <span class="date">${month}월 (11일 ~ 다음달 10일)</span>
                     <div class="priceBox">
                         <div class="payment-methods">
                             <span class="text">cash <span class="price">${amounts.cash.toLocaleString()}원</span></span>
@@ -576,16 +578,17 @@ $(document).ready(function() {
             `);
         }
     }
-    // 커스텀 월 키 계산 함수 (12일 ~ 다음달 11일 기준)
+    // 커스텀 월 키 계산 함수 (11일 ~ 다음달 10일 기준)
     function getCustomMonthKey(dateString) {
         const date = new Date(dateString);
         let month = date.getMonth() + 1; // 월은 0부터 시작하므로 +1
         const day = date.getDate();
-        if (day < 12) {
-            month -= 1;
-            if (month === 0) {
-                month = 12; // 1월 이전은 12월로 설정
-            }
+        // 11일~다음달 10일 기준
+        if (day < 11) {
+          month -= 1;
+          if (month === 0) {
+            month = 12; // 1월 이전은 12월로 설정
+          }
         }
         return month;
     }
